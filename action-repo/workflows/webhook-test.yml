@@ -1,0 +1,55 @@
+name: Webhook Test Workflow
+
+# This workflow demonstrates various GitHub events that will trigger webhooks
+# Place this file in your action-repo repository
+
+on:
+  push:
+    branches: [ main, develop, staging ]
+  pull_request:
+    branches: [ main, develop ]
+    types: [opened, closed, synchronize]
+  create:
+    branches: [ main, develop ]
+  delete:
+    branches: [ main, develop ]
+
+jobs:
+  webhook-trigger:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Log webhook trigger
+      run: |
+        echo "🚀 Webhook should be triggered for this action!"
+        echo "Event: ${{ github.event_name }}"
+        echo "Branch: ${{ github.ref_name }}"
+        echo "Actor: ${{ github.actor }}"
+        echo "Repository: ${{ github.repository }}"
+        
+        # Create a simple log file
+        echo "Workflow executed at $(date)" >> webhook-log.txt
+        echo "Event: ${{ github.event_name }}" >> webhook-log.txt
+        echo "Branch: ${{ github.ref_name }}" >> webhook-log.txt
+        echo "---" >> webhook-log.txt
+        
+    - name: Display repository info
+      run: |
+        echo "Repository structure:"
+        ls -la
+        
+        echo "Git status:"
+        git status
+        
+        echo "Recent commits:"
+        git log --oneline -5
+        
+    - name: Test webhook endpoint (if accessible)
+      run: |
+        echo "If your webhook endpoint is publicly accessible, you can test it here"
+        echo "Example: curl -X POST your-webhook-url/health"
+        # Uncomment and modify the line below to test your webhook endpoint
+        # curl -f https://your-domain.com/health || echo "Webhook endpoint not accessible"
